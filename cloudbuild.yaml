@@ -22,6 +22,9 @@ steps:
            '--port', '9001', '--timeout', '60s', '--concurrency', '50',
            '--min-instances', '1']
   # [END cloudbuild_python_deploy_yaml]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
   
 # Store images in Google Artifact Registry 
 images:
