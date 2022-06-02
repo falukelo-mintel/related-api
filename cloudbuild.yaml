@@ -2,7 +2,7 @@ steps:
   # Install dependencies
   - name: python
     entrypoint: pip
-    args: ["install", "pytest", "--user"]
+    args: ["install", "pytest==7.1.2", "--user"]
 # [END cloudbuild_python_dependencies_yaml]
 
   # [START cloudbuild_python_tests_yaml]
