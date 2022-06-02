@@ -48,5 +48,5 @@ options:
 # [END cloudbuild_python_logs_yaml]
 # Store images in Google Artifact Registry 
 images:
-  - gcr.io/${PROJECT_ID}/connectxai:${SHORT_SHA}
+  - gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}
 # [END cloudbuild_python_yaml]
