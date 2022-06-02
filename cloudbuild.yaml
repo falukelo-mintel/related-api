@@ -1,0 +1,52 @@
+steps:
+  # Install dependencies
+  - name: python
+    entrypoint: pip
+    args: ["install", "pytest", "--user"]
+# [END cloudbuild_python_dependencies_yaml]
+
+  # [START cloudbuild_python_tests_yaml]
+  # Run unit tests
+  - name: python
+    entrypoint: python
+    args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml"] 
+  # [END cloudbuild_python_tests_yaml]
+
+  # [START cloudbuild_python_image_yaml]
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}', '.']
+  # [END cloudbuild_python_image_yaml]
+
+  # [START cloudbuild_python_push_yaml]
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',  'gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}']
+  # [END cloudbuild_python_push_yaml]
+  
+  # [START cloudbuild_python_deploy_yaml]
+  # Deploy to Cloud Run
+  - name: google/cloud-sdk
+    args: ['gcloud', 'run', 'deploy', 'relate_api-${SHORT_SHA}', 
+           '--image=gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}', 
+           '--region', 'asia-southeast1', '--platform', 'managed', 
+           '--allow-unauthenticated', '--memory', '2Gi', '--cpu', '1',
+           '--port', '9001', '--timeout', '60s', '--concurrency', '50',
+           '--min-instances', '1']
+  # [END cloudbuild_python_deploy_yaml]
+  
+# [START cloudbuild_python_logs_yaml]
+# Save test logs to Google Cloud Storage
+artifacts:
+  objects:
+    location: gs://connectx-ai-log-cloudbuild/
+    paths:
+      - ${SHORT_SHA}_test_log.xml
+options:
+  logging: CLOUD_LOGGING_ONLY
+# [END cloudbuild_python_logs_yaml]
+# Store images in Google Artifact Registry 
+images:
+  - gcr.io/${PROJECT_ID}/connectxai:${SHORT_SHA}
+# [END cloudbuild_python_yaml]
