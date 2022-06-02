@@ -1,17 +1,4 @@
 steps:
-  # Install dependencies
-  - name: python
-    entrypoint: pip
-    args: ["install", "-r", "requirements.txt", "--user"]
-# [END cloudbuild_python_dependencies_yaml]
-
-  # [START cloudbuild_python_tests_yaml]
-  # Run unit tests
-  - name: python
-    entrypoint: python
-    args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml"] 
-  # [END cloudbuild_python_tests_yaml]
-
   # [START cloudbuild_python_image_yaml]
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
@@ -36,16 +23,6 @@ steps:
            '--min-instances', '1']
   # [END cloudbuild_python_deploy_yaml]
   
-# [START cloudbuild_python_logs_yaml]
-# Save test logs to Google Cloud Storage
-artifacts:
-  objects:
-    location: gs://connectx-ai-log-cloudbuild/
-    paths:
-      - ${SHORT_SHA}_test_log.xml
-options:
-  logging: CLOUD_LOGGING_ONLY
-# [END cloudbuild_python_logs_yaml]
 # Store images in Google Artifact Registry 
 images:
   - gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}
