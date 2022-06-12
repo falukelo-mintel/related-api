@@ -18,9 +18,9 @@ steps:
     args: ['gcloud', 'run', 'deploy', 'training-krungsri-ai', 
            '--image=gcr.io/${PROJECT_ID}/training_krungsri_ai:${SHORT_SHA}', 
            '--region', 'asia-southeast1', '--platform', 'managed', 
-           '--allow-unauthenticated', '--memory', '2Gi', '--cpu', '1',
-           '--port', '9001', '--timeout', '60s', '--concurrency', '50',
-           '--min-instances', '1', '--update-env-vars', 
+           '--allow-unauthenticated', '--memory', '16Gi', '--cpu', '4',
+           '--port', '9001', '--timeout', '3600s', '--concurrency', '10',
+           '--min-instances', '0', '--max-instances', '3', '--update-env-vars',
            'GIT_USER=falukelo-mintel,GIT_KEY=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,GIT_REPO=related-api,GIT_BRANCH_REL=master,GIT_BRANCH_REC=rec']
   # [END cloudbuild_python_deploy_yaml]
 
