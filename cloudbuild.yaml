@@ -1,0 +1,33 @@
+steps:
+  # [START cloudbuild_python_image_yaml]
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'gcr.io/${PROJECT_ID}/training_krungsri_ai:${SHORT_SHA}', '.']
+  # [END cloudbuild_python_image_yaml]
+
+  # [START cloudbuild_python_push_yaml]
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',  'gcr.io/${PROJECT_ID}/training_krungsri_ai:${SHORT_SHA}']
+  # [END cloudbuild_python_push_yaml]
+  
+  # [START cloudbuild_python_deploy_yaml]
+  # Deploy to Cloud Run
+  - name: google/cloud-sdk
+    args: ['gcloud', 'run', 'deploy', 'training-krungsri-ai', 
+           '--image=gcr.io/${PROJECT_ID}/training_krungsri_ai:${SHORT_SHA}', 
+           '--region', 'asia-southeast1', '--platform', 'managed', 
+           '--allow-unauthenticated', '--memory', '2Gi', '--cpu', '1',
+           '--port', '9001', '--timeout', '60s', '--concurrency', '50',
+           '--min-instances', '1', '--update-env-vars', 
+           'GIT_USER=falukelo-mintel,GIT_KEY=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,GIT_REPO=related-api,GIT_BRANCH_REL=master,GIT_BRANCH_REC=rec']
+  # [END cloudbuild_python_deploy_yaml]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  
+# Store images in Google Artifact Registry 
+images:
+  - gcr.io/${PROJECT_ID}/training_krungsri_ai:${SHORT_SHA}
+# [END cloudbuild_python_yaml]
