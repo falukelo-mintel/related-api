@@ -21,15 +21,15 @@ async def get_related(item: Item):
     results_product = []
     consequents = df_final['consequents'].values.tolist()
     if len(consequents) == 0:
-        lst = related_similarity_content_tfidf(df_associations, input_url, df_recomendation)
+        lst = related_similarity_content_tfidf(data_model, input_url, df_recomendation)
         lst_sim = [r for r in lst if r not in consequents][:3]
         results_product = consequents + lst_sim
     elif len(consequents) == 1:
-        lst = related_similarity_content_tfidf(df_associations, input_url, df_recomendation)
+        lst = related_similarity_content_tfidf(data_model, input_url, df_recomendation)
         lst_sim = [r for r in lst if r not in consequents][:2]
         results_product = consequents + lst_sim
     elif len(consequents) == 2:
-        lst = related_similarity_content_tfidf(df_associations, input_url, df_recomendation)
+        lst = related_similarity_content_tfidf(data_model, input_url, df_recomendation)
         lst_sim = [r for r in lst if r not in consequents][:1]
         results_product = consequents + lst_sim
     else:
