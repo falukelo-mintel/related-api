@@ -45,6 +45,7 @@ def related_similarity_content_tfidf(df, content_url, df_recomendation):
         df_search = df_recomendation.iloc[ss]
         df_tmp = df.loc[df["antecedents"].str.contains('|'.join(df_search['DocumentUrlPath'].values), na=False)]
         df_tmp = df_tmp.drop_duplicates(subset=['antecedents'])
+        df_tmp = df_tmp.drop_duplicates(subset=['consequents'])
         if len(df_tmp) > 3:
             print(ss)
             break
