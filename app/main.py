@@ -5,7 +5,7 @@ from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 from utils import related_similarity_content
-data_model = pd.read_csv('data/df_associations.csv', index_col=0)
+data_model = pd.read_csv('data/df_associations.csv')
 df_article = pd.read_csv('data/list_article.csv')
 
 class Item(BaseModel):
