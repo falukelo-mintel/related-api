@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from utils import related_similarity_content_tfidf
 data_model = pd.read_csv('data/df_associations.csv')
-df_recomendation = pd.read_csv('recommended-20.csv')
+df_recomendation = pd.read_csv('data/recommended-20.csv')
 
 class Item(BaseModel):
     url: str
