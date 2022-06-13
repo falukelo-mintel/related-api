@@ -1,4 +1,5 @@
 import pandas as pd
+import ast
 
 def get_cateandsub(content_url, df_article):
     content_name = content_url.split('/')[-1]
@@ -27,3 +28,20 @@ def related_similarity_content(df, content_url, df_article):
     else:
         result = list(set(df_tmp["consequents"].values.tolist()))[:3]
     return result
+
+def related_similarity_content_tfidf(df, content_url, df_recomendation):
+    content_name = content_url.split('/')[-1]
+    df_rec = df_recomendation.loc[df_recomendation["DocumentUrlPath"].str.contains(content_name, na=False)]
+    list_recommend = ast.literal_eval(df_rec['recommend'].values[0])
+    sublist = overlapping_sublists(list_recommend, 4)
+    ss = []
+    for s in sublist:
+        ss += s
+        df_search = df_recomendation.iloc[ss]
+        df_tmp = df.loc[df["antecedents"].str.contains('|'.join(df_search['DocumentUrlPath'].values), na=False)]
+        df_tmp = df_tmp.drop_duplicates(subset=['antecedents'])
+        if len(df_tmp) > 3:
+            print(ss)
+            break
+    df_tmp = df_tmp.sort_values(by=['frequency_antecedent', 'confidence'], ascending=False)
+    return df_tmp['consequents'].values
