@@ -36,9 +36,6 @@ async def get_related(item: Item):
         results_product = consequents
     result = {"related_product": results_product}
     return JSONResponse(content=result)
-
-@app.post("/update_related/")
-async def update_related(item: Item):
     
 @app.get("/")
 async def test():
