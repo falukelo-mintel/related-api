@@ -1,6 +1,11 @@
 import pandas as pd
 import ast
 
+def overlapping_sublists(l, n, overlap=1, start=0):          
+    while start <= len(l) - n:
+        yield l[start:start+n]
+        start += n - overlap
+        
 def get_cateandsub(content_url, df_article):
     content_name = content_url.split('/')[-1]
     df_tmp = df_article.loc[df_article["DocumentUrlPath"].str.contains(content_name, na=False)]
