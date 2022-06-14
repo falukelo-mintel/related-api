@@ -41,7 +41,7 @@ async def create_item(item: Item):
     list_recommend = ast.literal_eval(description['recommend'].values[0])
     for idx in list_recommend:
         score = cosine_score[description.index[0]][idx]
-        text = df_text.iloc[df_text.index == idx]['DocumentUrlPath'].values[0]
+        text = recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0]
         if any(text not in his for his in history):
             result[count] = {'url': text,
                          'similar_score': 1 - score}
