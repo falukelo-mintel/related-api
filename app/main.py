@@ -87,7 +87,7 @@ def process(item: Item):
     
     db = firestore.Client()
     for row in tmp_df.itertuples():
-        update_tag_unknown(db, row.Index, row.Group)
+        update_tag_unknown(db, row.Index, row.Group, cata)
     
     return 'success'
 

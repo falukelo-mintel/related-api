@@ -31,7 +31,7 @@ def check_score(pdt,url):
                 return -1
         return -1
     
-def update_tag_unknown(db, cx_cookie, seg):
+def update_tag_unknown(db, cx_cookie, seg, cat):
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/activities/data')
     doc_unknown = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/unknownContact/data')
     doc_tag = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/tag/data')
@@ -43,7 +43,15 @@ def update_tag_unknown(db, cx_cookie, seg):
         tag_id = query_doc[0].id
         unknown_ref = doc_unknown.document(value)
         unknown_data = unknown_ref.get().to_dict()
-        unknown_tag = unknown_data['tag']
+        try:
+            unknown_tag = unknown_data['tag']
+            for c in cat:
+                query_tag = doc_tag.where(u'cx_Name', u'==', seg).get()
+                tag = query_tag[0].id
+                if tag in unknown_tag:
+                    unknown_tag.remove(tag)
+        except KeyError:
+            unknown_tag = []
         unknown_tag.append(tag_id)
         unknown_ref.update({
             u'tag': unknown_tag,
