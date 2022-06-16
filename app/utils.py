@@ -1,3 +1,5 @@
+from google.cloud import firestore
+
 def check_path2(url):
     url2 = url.split('/')
     if (url2[-1]=='personal'):
