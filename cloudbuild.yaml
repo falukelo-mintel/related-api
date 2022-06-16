@@ -18,8 +18,8 @@ steps:
     args: ['gcloud', 'run', 'deploy', 'segment-api-5e70174', 
            '--image=gcr.io/${PROJECT_ID}/segment_api:${SHORT_SHA}', 
            '--region', 'asia-southeast1', '--platform', 'managed', 
-           '--allow-unauthenticated', '--memory', '1Gi', '--cpu', '1',
-           '--port', '9001', '--timeout', '60s', '--concurrency', '50',
+           '--allow-unauthenticated', '--memory', '2Gi', '--cpu', '1',
+           '--port', '9001', '--timeout', '600s', '--concurrency', '10',
            '--min-instances', '1']
   # [END cloudbuild_python_deploy_yaml]
 

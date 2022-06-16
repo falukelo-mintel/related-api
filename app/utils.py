@@ -38,6 +38,10 @@ def update_tag_unknown(db, cx_cookie, seg, cat):
     doc_unknown = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/unknownContact/data')
     doc_tag = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/tag/data')
     query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).get()
+    tag_index = []
+    for c in cat:
+        query_tag = doc_tag.where(u'cx_Name', u'==', seg).get()
+        tag_index.append(query_tag[0].id)
     for q in query:
         activity = q.to_dict()
         value = activity['unknownContact']['value']
@@ -47,9 +51,7 @@ def update_tag_unknown(db, cx_cookie, seg, cat):
         unknown_data = unknown_ref.get().to_dict()
         try:
             unknown_tag = unknown_data['tag']
-            for c in cat:
-                query_tag = doc_tag.where(u'cx_Name', u'==', seg).get()
-                tag = query_tag[0].id
+            for tag in tag_index:
                 if tag in unknown_tag:
                     unknown_tag.remove(tag)
         except KeyError:
