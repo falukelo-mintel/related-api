@@ -54,12 +54,12 @@ def update_tag_unknown(db, cx_cookie, seg, cat):
             for tag in tag_index:
                 if tag in unknown_tag:
                     unknown_tag.remove(tag)
-                    tag_ref = doc_tag.document(tag)
-                    current_count = tag_ref.get().to_dict()['cx_count']
-                    tag_ref.update({
-                        u'cx_count': current_count - 1,
-                        u'lastModified': firestore.SERVER_TIMESTAMP
-                    })
+                    # tag_ref = doc_tag.document(tag)
+                    # current_count = tag_ref.get().to_dict()['cx_count']
+                    # tag_ref.update({
+                    #     u'cx_count': current_count - 1,
+                    #     u'lastModified': firestore.SERVER_TIMESTAMP
+                    # })
         except KeyError:
             unknown_tag = []
         unknown_tag.append(tag_id)
