@@ -37,7 +37,7 @@ def update_tag_unknown(db, cx_cookie, seg, cat):
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/activities/data')
     doc_unknown = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/unknownContact/data')
     doc_tag = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/tag/data')
-    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).get()
+    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).limit(1).get()
     tag_index = []
     for c in cat:
         query_tag = doc_tag.where(u'cx_Name', u'==', seg).get()
@@ -54,6 +54,12 @@ def update_tag_unknown(db, cx_cookie, seg, cat):
             for tag in tag_index:
                 if tag in unknown_tag:
                     unknown_tag.remove(tag)
+                    tag_ref = doc_tag.document(tag)
+                    current_count = tag_ref.get().to_dict()['cx_count']
+                    tag_ref.update({
+                        u'cx_count': current_count - 1,
+                        u'lastModified': firestore.SERVER_TIMESTAMP
+                    })
         except KeyError:
             unknown_tag = []
         unknown_tag.append(tag_id)
@@ -67,3 +73,4 @@ def update_tag_unknown(db, cx_cookie, seg, cat):
             u'cx_count': current_count + 1,
             u'lastModified': firestore.SERVER_TIMESTAMP
         })
+        break
