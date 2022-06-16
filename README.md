@@ -1,1 +1,1 @@
-# recommendation-api
+# segmentation-api

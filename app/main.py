@@ -11,7 +11,8 @@ from fastapi.responses import HTMLResponse
 from typing import Optional
 from pydantic import BaseModel
 
-from utils import check_path, check_path2, check_score
+from google.cloud import firestore
+from utils import check_path, check_path2, check_score, update_tag_unknown
 
 class Item(BaseModel):
     input_file_gs: str
@@ -77,20 +78,18 @@ def process(item: Item):
         max_mean = -1
         max_mean_name = 'deposit'
         for j,k in zip( tmp_df[tmp_df.Group==i].mean(), range(0,7) ):
-            # print(j, cata[k])
             if j > max_mean:
                 max_mean =j
                 max_mean_name = cata[k]
         cluster_name[i] = max_mean_name
 
-    # print(cluster_name)
-
     tmp_df.Group.replace(cluster_name,inplace=True)
-    # print(tmp_df)
-
-    tmp_df.to_csv('cluster_df.csv')
-    # return {'file':'join_df_file'}
-    return FileResponse(path="cluster_df.csv", filename="cluster_df.csv")
+    
+    db = firestore.Client()
+    for row in tmp_df.itertuples():
+        update_tag_unknown(db, row.cx_cookie, row.Group)
+    
+    return 'success'
 
 
 

@@ -30,3 +30,28 @@ def check_score(pdt,url):
             else:
                 return -1
         return -1
+    
+def update_tag_unknown(db, cx_cookie, seg):
+    doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/activities/data')
+    doc_unknown = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/unknownContact/data')
+    doc_tag = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/tag/data')
+    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).get()
+    for q in query:
+        activity = q.to_dict()
+        value = activity['unknownContact']['value']
+        query_doc = doc_tag.where(u'cx_Name', u'==', seg).get()
+        tag_id = query_doc[0].id
+        unknown_ref = doc_unknown.document(value)
+        unknown_data = unknown_ref.get().to_dict()
+        unknown_tag = unknown_data['tag']
+        unknown_tag.append(tag_id)
+        unknown_ref.update({
+            u'tag': unknown_tag,
+            u'lastModified': firestore.SERVER_TIMESTAMP
+        })
+        tag_ref = doc_tag.document(tag_id)
+        current_count = tag_ref.get().to_dict()['cx_count']
+        tag_ref.update({
+            u'cx_count': current_count + 1,
+            u'lastModified': firestore.SERVER_TIMESTAMP
+        })
