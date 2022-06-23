@@ -28,7 +28,7 @@ async def train_related(item: Item_rel):
     BUCKET_NAME = item.bucket_name
     bucket = client.get_bucket(BUCKET_NAME)
     blobs = bucket.list_blobs(prefix='krungsri/')
-    all_files = [f'gs://{BUCKET_NAME}/{blob.name}' for blob in blobs]
+    all_files = [f'gs://{BUCKET_NAME}/{blob.name}' for blob in blobs if 'csv' in blob.name]
     # print(all_files)
     li = []
     for filename in all_files:
