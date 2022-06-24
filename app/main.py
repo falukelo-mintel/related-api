@@ -91,17 +91,17 @@ async def train_related(item: Item_rel):
     df_associations['antecedents'] = df_associations['antecedents'].str.replace('https://www.krungsri.com/bank', 'https://www.krungsri.com')
     df_associations['antecedents'] = df_associations['antecedents'].str.replace('.html', '')
     bucket = client.get_bucket(BUCKET_NAME)
-    blob_source_name = 'krungsri/model/rel/main/data/df_associations.csv'
+    blob_source_name = 'Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/rel/main/data/df_associations.csv'
     source_blob = bucket.blob(blob_source_name)
     if source_blob.exists():
-        blob_dest_name = f'krungsri/model/rel/tmp/data/df_associations-{source_blob.time_created}.csv'
+        blob_dest_name = f'Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/rel/tmp/data/df_associations-{source_blob.time_created}.csv'
 
         new_blob = bucket.copy_blob(
             source_blob, bucket, blob_dest_name)
         source_blob.delete()
     else:
         print(f'Source blob [{blob_source_name}] not exists.')
-    df_associations.to_csv(f'gs://{BUCKET_NAME}/krungsri/model/rel/main/data/df_associations.csv', index=None)
+    df_associations.to_csv(f'gs://{BUCKET_NAME}/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/rel/main/data/df_associations.csv', index=None)
     # subprocess.call(['sh', './gitprocess_rel.sh'])
     return 'success'
 
