@@ -27,17 +27,22 @@ async def train_related(item: Item_rel):
     # BUCKET_NAME = os.environ['BUCKET_NAME']
     BUCKET_NAME = item.bucket_name
     bucket = client.get_bucket(BUCKET_NAME)
-    blobs = bucket.list_blobs(prefix='krungsri/')
+    blobs = bucket.list_blobs(prefix='Organizes/pJoo5lLhhAbbofIfYdLz/AI/data/')
     all_files = [f'gs://{BUCKET_NAME}/{blob.name}' for blob in blobs if 'csv' in blob.name]
     # print(all_files)
-    li = []
+    li_product = []
+    li_article = []
     for filename in all_files:
-        df = pd.read_csv(filename, index_col=None, header=0)
-        li.append(df)
-    df = pd.concat(li, axis=0, ignore_index=True)
-    del li
-    df_article = df.loc[df["cx_web_url_fullpath"].str.contains("plearn-plearn|krungsri-the-coach", na=False)]
-    df_product = df.loc[df["cx_web_url_fullpath"].str.contains("/personal/", na=False)]
+        df = pd.read_csv(filename, index_col=None, header=0, usecols=['cx_web_url_fullpath', 'cx_cookie', 'cx_event'])
+        li_product.append(df.loc[df["cx_web_url_fullpath"].str.contains("/personal/", na=False)])
+        li_article.append(df.loc[df["cx_web_url_fullpath"].str.contains("plearn-plearn|krungsri-the-coach", na=False)])
+        del df
+    df_article = pd.concat(li_article, axis=0, ignore_index=True)
+    df_product = pd.concat(li_product, axis=0, ignore_index=True)
+    del li_product
+    del li_article
+    # df_article = df.loc[df["cx_web_url_fullpath"].str.contains("plearn-plearn|krungsri-the-coach", na=False)]
+    # df_product = df.loc[df["cx_web_url_fullpath"].str.contains("/personal/", na=False)]
     unique_cookies = list(set(df_article['cx_cookie'].values.tolist()))
     df_tmp = pd.DataFrame(columns=df_product.columns)
     count = 0
