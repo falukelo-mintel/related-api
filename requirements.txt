@@ -7,6 +7,7 @@ deepcut==0.7.0.0
 pythainlp==3.0.8
 scikit-learn==1.0.2
 google-cloud-storage==2.4.0
+google-cloud-logging==3.1.2
 scipy==1.7.3
 fsspec==2022.5.0
 gcsfs==2022.5.0

@@ -7,6 +7,8 @@ import numpy as np
 import json
 import os
 from google.cloud import storage
+from google.cloud import logging
+import logging as log
 import subprocess
 import pythainlp
 import re
@@ -24,6 +26,8 @@ class Item_rec(BaseModel):
 @app.post("/train_related/")
 async def train_related(item: Item_rel):
     client = storage.Client()
+    logging_client = logging.Client()
+    logging_client.setup_logging()
     # BUCKET_NAME = os.environ['BUCKET_NAME']
     BUCKET_NAME = item.bucket_name
     bucket = client.get_bucket(BUCKET_NAME)
@@ -39,6 +43,7 @@ async def train_related(item: Item_rel):
         del df
     df_article = pd.concat(li_article, axis=0, ignore_index=True)
     df_product = pd.concat(li_product, axis=0, ignore_index=True)
+    log.info('Read files from GCS already.')
     del li_product
     del li_article
     # df_article = df.loc[df["cx_web_url_fullpath"].str.contains("plearn-plearn|krungsri-the-coach", na=False)]
@@ -99,10 +104,11 @@ async def train_related(item: Item_rel):
         new_blob = bucket.copy_blob(
             source_blob, bucket, blob_dest_name)
         source_blob.delete()
+        log.info('Move data model to /tmp/')
     else:
-        print(f'Source blob [{blob_source_name}] not exists.')
+        log.info(f'Source blob [{blob_source_name}] not exists.')
     df_associations.to_csv(f'gs://{BUCKET_NAME}/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/rel/main/data/df_associations.csv', index=None)
-    # subprocess.call(['sh', './gitprocess_rel.sh'])
+    log.info('Success.')
     return 'success'
 
 @app.post("/train_recommendation/")
