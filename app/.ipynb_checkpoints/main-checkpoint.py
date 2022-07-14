@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 from utils import related_similarity_content_tfidf
+from google.cloud import firestore
 data_model = pd.read_csv('data/df_associations.csv')
 df_recomendation = pd.read_csv('data/recommended-20.csv')
 
