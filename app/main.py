@@ -45,7 +45,7 @@ async def create_item(url: str, cookie: str):
         if any(text not in his for his in history):
             main_url = 'https://www.krungsri.com/th'
             url = main_url + text
-            query = doc_ref.where(u'url', u'==', url).get()
+            query = doc_ref.where(u'link', u'==', url).get()
             if query:
                 q = query[0].to_dict()
                 del q['textContent']
