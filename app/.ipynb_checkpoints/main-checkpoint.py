@@ -43,9 +43,9 @@ async def get_related(item: Item):
     
     for r in results_product:
         url = r.replace('/th/', '/').replace('/en/', '/')
-        query = doc_ref.where(u'url', u'==', url).get()[0]
+        query = doc_ref.where(u'url', u'==', url).get()
         if query:
-            q = query.to_dict()
+            q = query[0].to_dict()
             del q['createdBy']
             del q['lastModified']
             del q['createdDate']
