@@ -9,17 +9,17 @@ from google.cloud import firestore
 data_model = pd.read_csv('data/df_associations.csv')
 df_recomendation = pd.read_csv('data/recommended-20.csv')
 
-class Item(BaseModel):
-    url: str
-    cookie: str
+# class Item(BaseModel):
+#     url: str
+#     cookie: str
 
 app = FastAPI()
 
-@app.post("/get_related/")
-async def get_related(item: Item):
+@app.get("/get_related/")
+async def get_related(url: str, cookie: str):
     db = firestore.Client()
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/krungsriProduct/data')
-    input_url = item.url
+    input_url = url
     df_query = data_model.loc[data_model['antecedents'] == input_url]
     df_final = df_query.sort_values('confidence', ascending=False)
     results_product = []
