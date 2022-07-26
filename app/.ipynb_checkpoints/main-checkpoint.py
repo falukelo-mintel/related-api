@@ -39,7 +39,8 @@ async def get_related(url: str, cookie: str):
                 del q['lastModified']
                 del q['createdDate']
                 del q['modifiedBy']
-                result['related_product'].append(q)
+                if q not in result['related_product']:
+                    result['related_product'].append(q)
             if result['related_product'].__len__() == 3:
                 break
         if result['related_product'].__len__() == 3:
