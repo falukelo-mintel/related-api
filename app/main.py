@@ -10,6 +10,7 @@ import numpy as np
 from urllib.parse import quote, unquote
 import ast
 from google.cloud import firestore
+from fastapi.middleware.cors import CORSMiddleware
 
 cossim_matrix = pd.read_csv('data/cossim_matrix.csv')
 recommended = pd.read_csv('data/recommended.csv')
@@ -21,7 +22,7 @@ recommended = pd.read_csv('data/recommended.csv')
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
