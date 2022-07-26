@@ -29,7 +29,7 @@ async def get_related(url: str, cookie: str):
     consequents = df_final['consequents'].values.tolist()
     
     result = {"related_product": []}
-    count = 0
+    # count = 0
     while True:
         for cons in consequents:
             url = cons.replace('/th/', '/').replace('/en/', '/')
@@ -47,8 +47,8 @@ async def get_related(url: str, cookie: str):
         if result['related_product'].__len__() == 3:
             break
         else:
-            lst = related_similarity_content_tfidf(data_model, input_url, df_recomendation, count)
-            count += 1
+            lst = related_similarity_content_tfidf(data_model, input_url, df_recomendation)
+            # count += 1
             consequents = [r for r in lst if r not in result['related_product']]
         
     return JSONResponse(content=result)
