@@ -20,6 +20,9 @@ async def get_related(url: str, cookie: str):
     db = firestore.Client()
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/krungsriProduct/data')
     input_url = url
+    url_list = url.split('/')
+    if len(url_list) > 5:
+        url = url[:3] + url[-1]
     df_query = data_model.loc[data_model['antecedents'] == input_url]
     df_final = df_query.sort_values('confidence', ascending=False)
     results_product = []

@@ -1,7 +1,7 @@
 import pandas as pd
 import ast
 
-def overlapping_sublists(l, n, overlap=1, start=0):          
+def overlapping_sublists(l, n, overlap=0, start=0):          
     while start <= len(l) - n:
         yield l[start:start+n]
         start += n - overlap
@@ -46,8 +46,8 @@ def related_similarity_content_tfidf(df, content_url, df_recomendation):
         df_tmp = df.loc[df["antecedents"].str.contains('|'.join(df_search['DocumentUrlPath'].values), na=False)]
         df_tmp = df_tmp.drop_duplicates(subset=['antecedents'])
         df_tmp = df_tmp.drop_duplicates(subset=['consequents'])
-        if len(df_tmp) > 3:
-            print(ss)
-            break
+        # if len(df_tmp) > 3:
+        #     print(ss)
+        #     break
     df_tmp = df_tmp.sort_values(by=['frequency_antecedent', 'confidence'], ascending=False)
     return df_tmp['consequents'].values
