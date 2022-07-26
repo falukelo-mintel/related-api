@@ -34,10 +34,10 @@ def related_similarity_content(df, content_url, df_article):
         result = list(set(df_tmp["consequents"].values.tolist()))[:3]
     return result
 
-def related_similarity_content_tfidf(df, content_url, df_recomendation):
+def related_similarity_content_tfidf(df, content_url, df_recomendation, i):
     content_name = content_url.split('/')[-1]
     df_rec = df_recomendation.loc[df_recomendation["DocumentUrlPath"].str.contains(content_name, na=False)]
-    list_recommend = ast.literal_eval(df_rec['recommend'].values[0])
+    list_recommend = ast.literal_eval(df_rec['recommend'].values[i])
     sublist = overlapping_sublists(list_recommend, 4)
     ss = []
     for s in sublist:
