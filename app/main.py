@@ -19,6 +19,13 @@ recommended = pd.read_csv('data/recommended.csv')
 #     cx_cookie: str
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/get_recommend/")
 async def create_item(url: str, cookie: str):
