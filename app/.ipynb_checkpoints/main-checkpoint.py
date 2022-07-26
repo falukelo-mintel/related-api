@@ -50,12 +50,8 @@ async def train_related(item: Item_rel):
     # df_product = df.loc[df["cx_web_url_fullpath"].str.contains("/personal/", na=False)]
     unique_cookies = list(set(df_article['cx_cookie'].values.tolist()))
     df_tmp = pd.DataFrame(columns=df_product.columns)
-    count = 0
-    for cookie in unique_cookies:
-        if cookie in df_product["cx_cookie"].values.tolist():
-            count += 1
-            df_tmp = pd.concat([df_tmp, df_product.loc[df_product["cx_cookie"] == cookie]], ignore_index=True)
-            df_tmp = pd.concat([df_tmp, df_article.loc[df_article["cx_cookie"] == cookie]], ignore_index=True)
+    df_tmp = pd.concat([df_tmp, df_product.loc[df_product["cx_cookie"].isin(unique_cookies)]], ignore_index=True)
+    df_tmp = pd.concat([df_tmp, df_article.loc[df_article["cx_cookie"].isin(unique_cookies)]], ignore_index=True)
     cookie_dup = list(set(df_tmp['cx_cookie'].values.tolist()))
     df_tmp['cx_web_url_fullpath'] = df_tmp['cx_web_url_fullpath'].str.split('?', 1).str[0]
     df_tmp = df_tmp.loc[df_tmp['cx_event'] == 'Pageview']
@@ -64,25 +60,27 @@ async def train_related(item: Item_rel):
     df = pd.DataFrame()
     data = {}
     for cookie in unique_cookies:
-        df_temp = df_tmp.loc[df_tmp["cx_cookie"] == cookie]
         data[cookie] = {'products': {},
                         'articles': {}}
-        for row in df_temp.iterrows():
-            if row[1]['cx_web_url_fullpath'] in unique_url:
-                try:
-                    if '/personal' in row[1]['cx_web_url_fullpath']:
-                        data[cookie]['products'][row[1]['cx_web_url_fullpath']] += 1
-                    elif '/plearn-plearn' in row[1]['cx_web_url_fullpath'] or '/krungsri-the-coach' in row[1]['cx_web_url_fullpath']:
-                        data[cookie]['articles'][row[1]['cx_web_url_fullpath']] += 1
-                except KeyError:
-                    if '/personal' in row[1]['cx_web_url_fullpath']:
-                        data[cookie]['products'][row[1]['cx_web_url_fullpath']] = 1
-                    elif '/plearn-plearn' in row[1]['cx_web_url_fullpath'] or '/krungsri-the-coach' in row[1]['cx_web_url_fullpath']:
-                        data[cookie]['articles'][row[1]['cx_web_url_fullpath']] = 1
+    for row in df_tmp.iterrows():
+        cookie = row[1]['cx_cookie']
+        if row[1]['cx_web_url_fullpath'] in unique_url:
+            try:
+                if '/personal' in row[1]['cx_web_url_fullpath']:
+                    data[cookie]['products'][row[1]['cx_web_url_fullpath']] += 1
+                elif '/plearn-plearn' in row[1]['cx_web_url_fullpath'] or '/krungsri-the-coach' in row[1]['cx_web_url_fullpath']:
+                    data[cookie]['articles'][row[1]['cx_web_url_fullpath']] += 1
+            except KeyError:
+                if '/personal' in row[1]['cx_web_url_fullpath']:
+                    data[cookie]['products'][row[1]['cx_web_url_fullpath']] = 1
+                elif '/plearn-plearn' in row[1]['cx_web_url_fullpath'] or '/krungsri-the-coach' in row[1]['cx_web_url_fullpath']:
+                    data[cookie]['articles'][row[1]['cx_web_url_fullpath']] = 1
     data_gen = []
     for d in data:
         articles = data[d]['articles']
         products = data[d]['products']
+        if products == {} or articles =={}:
+            continue
         for idx_a, a in enumerate(articles):
             for p in products:
                 tmp_lst = [','.join(list(articles.keys())[:idx_a+1]), p]
