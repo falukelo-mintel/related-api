@@ -40,7 +40,7 @@ async def create_item(url: str, cookie: str):
     history = list(set(history))
     
     content_name = input_url.split('/')[-1]
-    description = df_recomendation.loc[df_recomendation["DocumentUrlPath"].str.contains(content_name, na=False)]
+    description = recommended.loc[recommended["DocumentUrlPath"].str.contains(content_name, na=False)]
     cosine_score = cossim_matrix.values.tolist()
     print(type(cosine_score))
     
