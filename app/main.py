@@ -46,14 +46,14 @@ async def create_item(url: str, cookie: str):
     
     result = {"related_article": []}
     list_recommend = ast.literal_eval(description['recommend'].values[0])
-    doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
+    cont_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
     for idx in list_recommend:
         score = cosine_score[description.index[0]][idx]
         text = recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0]
-        if any(text not in his for his in history):
+        if all(text not in his for his in history):
             main_url = 'https://www.krungsri.com/th'
             url = main_url + text
-            query = doc_ref.where(u'link', u'==', url).get()
+            query = cont_ref.where(u'link', u'==', url).get()
             if query:
                 q = query[0].to_dict()
                 del q['textContent']
