@@ -49,7 +49,7 @@ async def create_item(url: str, cookie: str):
     cont_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
     for idx in list_recommend:
         score = cosine_score[description.index[0]][idx]
-        text = recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0]
+        text = quote(recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0])
         if all(text not in his for his in history):
             main_url = 'https://www.krungsri.com/th'
             url = main_url + text
