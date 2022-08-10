@@ -50,8 +50,8 @@ async def create_item(url: str, cookie: str):
     for idx in list_recommend:
         score = cosine_score[description.index[0]][idx]
         text = quote(recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0])
-        text = text.split('/')[-1]
-        if all(text not in his for his in history):
+        text2 = text.split('/')[-1]
+        if all(text2 not in his for his in history):
             main_url = 'https://www.krungsri.com/th'
             url = main_url + text
             query = cont_ref.where(u'link', u'==', url).get()
