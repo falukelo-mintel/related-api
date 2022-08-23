@@ -37,16 +37,17 @@ async def create_item(url: str, cookie: str):
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/activities/data')
     query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).get()
     history = [q.to_dict()['cx_web_url_fullpath'].split('?')[0] for q in query]
-    history = list(set(history))
+    history = list(set(h for h in history if '/krungsri-the-coach/' in h or '/plearn-plearn/' in h))
     
     content_name = input_url.split('/')[-1]
     description = recommended.loc[recommended["DocumentUrlPath"].str.contains(content_name, na=False)]
     cosine_score = cossim_matrix.values.tolist()
-    print(type(cosine_score))
+    # print(type(cosine_score))
     
     result = {"related_article": []}
     list_recommend = ast.literal_eval(description['recommend'].values[0])
     cont_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
+    urls = []
     for idx in list_recommend:
         score = cosine_score[description.index[0]][idx]
         text = quote(recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0])
@@ -54,17 +55,18 @@ async def create_item(url: str, cookie: str):
         if all(text2 not in his for his in history):
             main_url = 'https://www.krungsri.com/th'
             url = main_url + text
-            query = cont_ref.where(u'link', u'==', url).get()
-            if query:
-                q = query[0].to_dict()
-                del q['textContent']
-                del q['createdBy']
-                del q['lastModified']
-                del q['createdDate']
-                del q['modifiedBy']
-                result['related_article'].append(q)
-        if result['related_article'].__len__() == 3:
+            urls.append(url)
+        if urls.__len__() == 3:
             break
+    query = cont_ref.where(u'link', u'in', urls).get()
+    for qry in query:
+        q = qry.to_dict()
+        del q['textContent']
+        del q['createdBy']
+        del q['lastModified']
+        del q['createdDate']
+        del q['modifiedBy']
+        result['related_article'].append(q)
     return JSONResponse(content=result)
 
 @app.get("/")
