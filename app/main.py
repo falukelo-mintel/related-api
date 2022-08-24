@@ -8,7 +8,7 @@ from utils import related_similarity_content_tfidf
 from google.cloud import firestore
 from fastapi.middleware.cors import CORSMiddleware
 data_model = pd.read_csv('data/df_associations.csv')
-recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
+df_recomendation = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
 
 # class Item(BaseModel):
 #     url: str
