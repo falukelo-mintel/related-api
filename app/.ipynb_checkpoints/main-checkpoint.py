@@ -55,7 +55,7 @@ async def get_related(url: str, cookie: str):
         else:
             lst = related_similarity_content_tfidf(data_model, input_url, df_recomendation)
             df_rec = df_recomendation.loc[df_recomendation.index == lst[count]]
-            df_query = data_model.loc[data_model['antecedents'] == f'https://www.krungsri.com/th{df_rec.DocumentUrlPath.values[0]}']
+            df_query = data_model.loc[data_model['antecedents'] == f'{df_rec.link.values[0]}']
             df_final = df_query.sort_values('confidence', ascending=False)
             consequents = df_final['consequents'].values.tolist()
             count += 1

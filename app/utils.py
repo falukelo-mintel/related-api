@@ -37,7 +37,7 @@ def related_similarity_content(df, content_url, df_article):
 def related_similarity_content_tfidf(df, content_url, df_recomendation):
     content_name = content_url.split('/')[-1]
     # print(content_name)
-    df_rec = df_recomendation.loc[df_recomendation["DocumentUrlPath"].str.contains(content_name, na=False)]
+    df_rec = df_recomendation.loc[df_recomendation["link"].str.contains(content_name, na=False)]
     list_recommend = ast.literal_eval(df_rec['recommend'].values[0])
     # sublist = overlapping_sublists(list_recommend, 4)
     # ss = []
