@@ -12,8 +12,8 @@ import ast
 from google.cloud import firestore
 from fastapi.middleware.cors import CORSMiddleware
 
-cossim_matrix = pd.read_csv('data/cossim_matrix.csv')
-recommended = pd.read_csv('data/recommended.csv')
+cossim_matrix = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/cossim_matrix.csv')
+recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
 
 # class Item(BaseModel):
 #     url: str
@@ -40,7 +40,7 @@ async def create_item(url: str, cookie: str):
     history = list(set(h for h in history if '/krungsri-the-coach/' in h or '/plearn-plearn/' in h))
     
     content_name = input_url.split('/')[-1]
-    description = recommended.loc[recommended["DocumentUrlPath"].str.contains(content_name, na=False)]
+    description = recommended.loc[recommended["link"].str.contains(content_name, na=False)]
     cosine_score = cossim_matrix.values.tolist()
     # print(type(cosine_score))
     
@@ -50,12 +50,12 @@ async def create_item(url: str, cookie: str):
     urls = []
     for idx in list_recommend:
         score = cosine_score[description.index[0]][idx]
-        text = quote(recommended.iloc[recommended.index == idx]['DocumentUrlPath'].values[0])
+        text = quote(recommended.iloc[recommended.index == idx]['link'].values[0])
         text2 = text.split('/')[-1]
         if all(text2 not in his for his in history):
-            main_url = 'https://www.krungsri.com/th'
-            url = main_url + text
-            urls.append(url)
+            # main_url = 'https://www.krungsri.com/th'
+            # url = main_url + text
+            urls.append(text)
         if urls.__len__() == 3:
             break
     query = cont_ref.where(u'link', u'in', urls).get()
