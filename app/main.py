@@ -51,6 +51,9 @@ async def create_item(url: str, cookie: str):
     for idx in list_recommend:
         score = cosine_score[description.index[0]][int(idx)]
         text = recommended.iloc[recommended.index == int(idx)]['link'].values[0]
+        if '/krungsri-the-coach/' in input_url:
+            if '/plearn-plearn/' in text:
+                continue
         text2 = quote(text.split('/')[-1])
         if all(text2 not in his for his in history):
             # main_url = 'https://www.krungsri.com/th'
