@@ -96,7 +96,7 @@ app.add_middleware(
 )
 
 @app.get("/get_related/")
-async def get_related(url: str, cookie: str):
+async def get_related(url: str, cookie: str, cx_Name: str = '', tag: str = '', category: str = '', subItem: str = ''):
     db = firestore.Client()
     prod_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/krungsriProduct/data')
     art_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
@@ -105,19 +105,51 @@ async def get_related(url: str, cookie: str):
     input_url = unquote(input_url)
     text = input_url.split('/')[-1]
     df_result = df_recomendation.loc[df_recomendation.link.str.contains(text)]
-    if df_result.__len__() > 0:
-        des_list = df_result.values.tolist()[0][2:]
-        result = {"related_products": []}
-        query = prod_ref.where(u'description', u'in', des_list).get()
-        for qry in query:
-            q = qry.to_dict()
-            del q['createdBy']
-            del q['lastModified']
-            del q['createdDate']
-            del q['modifiedBy']
-            result['related_products'].append(q)
-    else:
-        result = {'status': 400}
+    if df_result.__len__() <= 0:
+        arts = list(art_ref.stream())
+        arts_dict = list(map(lambda x: x.to_dict(), arts))
+        df = pd.DataFrame(arts_dict)
+        result = {'out_labels': [], 'out_scores': []}
+        try:
+            keys = tag.split('|')
+        except AttributeError:
+            keys = [category, subItem]
+        for des in prod.description.values:
+            out = zero_classify(des, 
+                  candidate_labels=keys)
+            for k in keys:
+                result['out_labels'].append(des)
+            result['out_scores'] += out['scores']
+        res_df = []
+        scores_test = result['out_scores'].copy()
+        labels_test = result['out_labels'].copy()
+        while True:
+            idx = scores_test.index(max(scores_test))
+            label = labels_test[idx]
+            score = scores_test[idx]
+            scores_test.pop(idx)
+            labels_test.pop(idx)
+            if label not in res_df and label in prod.description.values.tolist():
+                res_df.append(label)
+            if res_df.__len__() >= 3:
+                break
+        new_list = [input_url, cx_Name] + res_df
+        new_df = pd.DataFrame([new_list], columns=df_recomendation.columns)
+        df_recomendation = df_recomendation.append(new_df)
+        df_recomendation = df_recomendation.reset_index(drop=True)
+    
+    des_list = df_result.values.tolist()[0][2:]
+    result = {"related_products": []}
+    query = prod_ref.where(u'description', u'in', des_list).get()
+    for qry in query:
+        q = qry.to_dict()
+        del q['createdBy']
+        del q['lastModified']
+        del q['createdDate']
+        del q['modifiedBy']
+        del q['productDescription']
+        result['related_products'].append(q)
+        # result = {'status': 400}
 #     df_query = data_model.loc[data_model['antecedents'] == input_url]
 #     df_final = df_query.sort_values('confidence', ascending=False)
 #     results_product = []
