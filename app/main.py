@@ -35,7 +35,7 @@ async def create_item(url: str, cookie: str):
     cx_cookie = cookie
     db = firestore.Client()
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/activities/data')
-    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).get()
+    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).order_by(u'createdDate').limit(300).get()
     history = [q.to_dict()['cx_web_url_fullpath'].split('?')[0] for q in query]
     history = list(set(h for h in history if '/krungsri-the-coach/' in h or '/plearn-plearn/' in h))
     
