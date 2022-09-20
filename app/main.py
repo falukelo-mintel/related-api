@@ -8,6 +8,77 @@ from utils import related_similarity_content_tfidf
 from google.cloud import firestore
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import quote, unquote
+import numpy as np
+from tqdm.auto import tqdm
+import torch
+
+#datasets
+from datasets import load_dataset
+
+#transformers
+from transformers import (
+    CamembertTokenizer,
+    AutoTokenizer,
+    AutoModel,
+    AutoModelForMaskedLM,
+    AutoModelForSequenceClassification,
+    AutoModelForTokenClassification,
+    TrainingArguments,
+    Trainer,
+    pipeline,
+)
+
+#thai2transformers
+import thai2transformers
+from thai2transformers.preprocess import process_transformers
+from thai2transformers.metrics import (
+    classification_metrics, 
+    multilabel_classification_metrics,
+)
+from thai2transformers.tokenizers import (
+    ThaiRobertaTokenizer,
+    ThaiWordsNewmmTokenizer,
+    ThaiWordsSyllableTokenizer,
+    FakeSefrCutTokenizer,
+    SEFR_SPLIT_TOKEN
+)
+
+model_names = [
+    'wangchanberta-base-att-spm-uncased',
+    'xlm-roberta-base',
+    'bert-base-multilingual-cased',
+    'wangchanberta-base-wiki-newmm',
+    'wangchanberta-base-wiki-ssg',
+    'wangchanberta-base-wiki-sefr',
+    'wangchanberta-base-wiki-spm',
+]
+
+tokenizers = {
+    'wangchanberta-base-att-spm-uncased': AutoTokenizer,
+    'xlm-roberta-base': AutoTokenizer,
+    'bert-base-multilingual-cased': AutoTokenizer,
+    'wangchanberta-base-wiki-newmm': ThaiWordsNewmmTokenizer,
+    'wangchanberta-base-wiki-ssg': ThaiWordsSyllableTokenizer,
+    'wangchanberta-base-wiki-sefr': FakeSefrCutTokenizer,
+    'wangchanberta-base-wiki-spm': ThaiRobertaTokenizer,
+}
+public_models = ['xlm-roberta-base', 'bert-base-multilingual-cased'] 
+#@title Choose Pretrained Model
+model_name = "wangchanberta-base-att-spm-uncased" #@param ["wangchanberta-base-att-spm-uncased", "xlm-roberta-base", "bert-base-multilingual-cased", "wangchanberta-base-wiki-newmm", "wangchanberta-base-wiki-syllable", "wangchanberta-base-wiki-sefr", "wangchanberta-base-wiki-spm"]
+
+#create tokenizer
+tokenizer = tokenizers[model_name].from_pretrained(
+                f'airesearch/{model_name}' if model_name not in public_models else f'{model_name}',
+                revision='main',
+                model_max_length=416,)
+zero_classify = pipeline(task='zero-shot-classification',
+         tokenizer=tokenizer,
+         model=AutoModelForSequenceClassification.from_pretrained(
+             f'airesearch/{model_name}' if model_name not in public_models else f'airesearch/{model_name}-finetuned',
+             revision='finetuned@xnli_th')
+         )
+
+
 # data_model = pd.read_csv('data/df_associations.csv')
 df_recomendation = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recprod_master.csv')
 
@@ -34,7 +105,7 @@ async def get_related(url: str, cookie: str):
     input_url = unquote(input_url)
     text = input_url.split('/')[-1]
     df_result = df_recomendation.loc[df_recomendation.link.str.contains(text)]
-    if des_list.__len__() > 0:
+    if df_result.__len__() > 0:
         des_list = df_result.values.tolist()[0][2:]
         result = {"related_products": []}
         query = prod_ref.where(u'description', u'in', des_list).get()
