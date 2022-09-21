@@ -18,8 +18,8 @@ steps:
     args: ['gcloud', 'run', 'deploy', 'relate-api-74d4560', 
            '--image=gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}', 
            '--region', 'asia-southeast1', '--platform', 'managed', 
-           '--allow-unauthenticated', '--memory', '2Gi', '--cpu', '1',
-           '--port', '9001', '--timeout', '60s', '--concurrency', '50',
+           '--allow-unauthenticated', '--memory', '4Gi', '--cpu', '2',
+           '--port', '9001', '--timeout', '60s', '--concurrency', '20',
            '--min-instances', '1']
   # [END cloudbuild_python_deploy_yaml]
 
