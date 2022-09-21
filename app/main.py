@@ -43,6 +43,7 @@ from thai2transformers.tokenizers import (
     SEFR_SPLIT_TOKEN
 )
 
+df_recomendation = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recprod_master.csv')
 model_names = [
     'wangchanberta-base-att-spm-uncased',
     'xlm-roberta-base',
@@ -80,7 +81,7 @@ zero_classify = pipeline(task='zero-shot-classification',
 
 
 # data_model = pd.read_csv('data/df_associations.csv')
-df_recomendation = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recprod_master.csv')
+
 
 # class Item(BaseModel):
 #     url: str

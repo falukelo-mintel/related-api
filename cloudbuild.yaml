@@ -29,4 +29,6 @@ options:
 # Store images in Google Artifact Registry 
 images:
   - gcr.io/${PROJECT_ID}/relate_api:${SHORT_SHA}
+  
+timeout: 3600s
 # [END cloudbuild_python_yaml]
