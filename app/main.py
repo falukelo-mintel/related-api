@@ -70,6 +70,18 @@ async def create_item(url: str, cookie: str):
         del q['createdDate']
         del q['modifiedBy']
         result['related_article'].append(q)
+    if len(result['related_article']) < 3:
+        lim = 3 - len(result['related_article'])
+        query = cont_ref.order_by(u'createdDate').limit(lim).get()
+        for qry in query:
+            q = qry.to_dict()
+            del q['textContent']
+            del q['createdBy']
+            del q['lastModified']
+            del q['createdDate']
+            del q['modifiedBy']
+            result['related_article'].append(q)
+    
     return JSONResponse(content=result)
 
 @app.get("/")
