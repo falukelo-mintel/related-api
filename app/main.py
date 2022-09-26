@@ -61,15 +61,18 @@ async def create_item(url: str, cookie: str):
             urls.append(text)
         if urls.__len__() == 3:
             break
-    query = cont_ref.where(u'link', u'in', urls).get()
-    for qry in query:
-        q = qry.to_dict()
-        del q['textContent']
-        del q['createdBy']
-        del q['lastModified']
-        del q['createdDate']
-        del q['modifiedBy']
-        result['related_article'].append(q)
+    try:
+        query = cont_ref.where(u'link', u'in', urls).get()
+        for qry in query:
+            q = qry.to_dict()
+            del q['textContent']
+            del q['createdBy']
+            del q['lastModified']
+            del q['createdDate']
+            del q['modifiedBy']
+            result['related_article'].append(q)
+    except Exception as e:
+        print(e)
     if len(result['related_article']) < 3:
         lim = 3 - len(result['related_article'])
         query = cont_ref.order_by(u'createdDate').limit(lim).get()
