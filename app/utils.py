@@ -56,7 +56,7 @@ def text_processor(text):
     text = re.sub('[^A-Za-z0-9ก-๙\s]+|ๆ', '', text)
     return text
 
-def train_recommendation(df, fliename):
+def train_rec(df, fliename):
     stop_words = [t for t in list(thai_stopwords())]
     tfidf_vectors = TfidfVectorizer(
         tokenizer=text_tokenizer,

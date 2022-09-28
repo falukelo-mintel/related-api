@@ -14,7 +14,7 @@ import requests
 from google.cloud import logging
 import logging as log
 
-from utils import train_recommendation
+from utils import train_rec
 
 
 app = FastAPI()
@@ -121,12 +121,12 @@ async def train_recommendation():
 
     #### Plean ####
     df = pd.DataFrame(arts_dict)
-    train_recommendation(df, 'recommended')
+    train_rec(df, 'recommended')
 
     #### The coach #### recommended_coach
     df_coach = df.loc[df.link.str.contains('/krungsri-the-coach/')]
     df_coach = df_coach.reset_index(drop = True)
-    train_recommendation(df_coach, 'recommended_coach')
+    train_rec(df_coach, 'recommended_coach')
 
     response = requests.get("https://recommend-api-0742218-vj5uu3gpya-as.a.run.app/update")
     log.info(response)
