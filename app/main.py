@@ -110,6 +110,9 @@ async def get_recommend(url: str, cookie: str):
     elif '/plearn-plearn/' in input_url:
         df_articles = df_arts
         
+    description = recommended.loc[recommended["link"].str.contains(content_name, na=False)]
+    list_recommend = ast.literal_eval(description['recommend'].values[0])
+    
     result = {"related_article": []}
     urls = []
     for idx in list_recommend:
