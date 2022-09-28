@@ -87,6 +87,8 @@ async def create_item(url: str, cookie: str):
                 text2 = quote(q['link'].split('/')[-1])
                 if all(text2 not in his for his in history):
                     result['related_article'].append(q)
+            if len(result['related_article']) >= 3:
+                break
     
     return JSONResponse(content=result)
 
