@@ -95,3 +95,9 @@ async def create_item(url: str, cookie: str):
 @app.get("/")
 async def test():
     return "Recommendation Article by Mintel."
+
+@app.get("/update")
+async def update():
+    global recommended
+    recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
+    return JSONResponse({"status": 200})
