@@ -2,6 +2,8 @@ from typing import Union
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+
 import pandas as pd
 import numpy as np
 import re
