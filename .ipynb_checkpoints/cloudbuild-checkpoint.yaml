@@ -20,7 +20,7 @@ steps:
            '--region', 'asia-southeast1', '--platform', 'managed', 
            '--allow-unauthenticated', '--memory', '16Gi', '--cpu', '4',
            '--port', '9001', '--timeout', '3600s', '--concurrency', '10',
-           '--min-instances', '1', '--max-instances', '3']
+           '--min-instances', '0', '--max-instances', '3']
   # [END cloudbuild_python_deploy_yaml]
 
 options:

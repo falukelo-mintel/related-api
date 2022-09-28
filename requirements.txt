@@ -11,3 +11,4 @@ google-cloud-firestore==2.4.0
 scipy==1.7.3
 fsspec==2022.5.0
 gcsfs==2022.5.0
+python-crfsuite==0.9.8
