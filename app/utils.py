@@ -59,6 +59,9 @@ def text_processor(text):
     return text
 
 def train_rec(df, fliename):
+    client = storage.Client()
+    logging_client = logging.Client()
+    logging_client.setup_logging()
     stop_words = [t for t in list(thai_stopwords())]
     tfidf_vectors = TfidfVectorizer(
         tokenizer=text_tokenizer,
@@ -86,6 +89,8 @@ def train_rec(df, fliename):
     cossim_matrix['recommend'] = cossim_matrix.columns[:].to_numpy()[np.argsort(a, axis=1)[:, :30]].tolist()
     df['recommend'] = cossim_matrix['recommend']
     df = df[['link', 'recommend']]
+    
+    bucket = client.get_bucket('connect-x-production.appspot.com')
     blob_source_name = f'Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/{fliename}.csv'
     source_blob = bucket.blob(blob_source_name)
     if source_blob.exists():
