@@ -16,7 +16,7 @@ db = firestore.Client()
 doc_arts = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
 arts = list(doc_arts.order_by(u'lastModified', direction=firestore.Query.DESCENDING).stream())
 arts_dict = list(map(lambda x: x.to_dict(), arts))
-df_atrs = pd.DataFrame(arts_dict)
+df_arts = pd.DataFrame(arts_dict)
 
 # class Item(BaseModel):
 #     url: str
@@ -106,8 +106,10 @@ async def get_recommend(url: str, cookie: str):
     
     if '/krungsri-the-coach/' in input_url:
         recommended = recommended_coach
-        df_atrs = df_atrs.loc[df_atrs.link.str.contains('/krungsri-the-coach/')]
-    
+        df_articles = df_arts.loc[df_arts.link.str.contains('/krungsri-the-coach/')]
+    elif '/plearn-plearn/' in input_url:
+        df_articles = df_arts
+        
     result = {"related_article": []}
     urls = []
     for idx in list_recommend:
@@ -118,7 +120,7 @@ async def get_recommend(url: str, cookie: str):
         if urls.__len__() == 3:
             break
     if len(urls) < 3:
-        for text in df_atrs.link.values:
+        for text in df_articles.link.values:
             text2 = quote(text.split('/')[-1])
             if all(text2 not in his for his in history):
                 urls.append(text)
@@ -126,7 +128,7 @@ async def get_recommend(url: str, cookie: str):
                 break
     for url in urls:
         text = url.split('/')
-        query = df_atrs.loc[df_atrs.link.str.contains(text[4]) & df_atrs.link.str.contains(text[-1])]
+        query = df_articles.loc[df_articles.link.str.contains(text[4]) & df_articles.link.str.contains(text[-1])]
         query = query.reset_index(drop = True)
         del query['textContent']
         del query['createdBy']
@@ -146,13 +148,13 @@ async def test():
 async def update():
     global recommended
     global recommended_coach
-    global df_atrs
-    global df_atrs_coach
+    global df_arts
+    global df_arts
     recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
     recommended_coach = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended_coach.csv')
     db = firestore.Client()
     doc_arts = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
     arts = list(doc_arts.order_by(u'lastModified', direction=firestore.Query.DESCENDING).stream())
     arts_dict = list(map(lambda x: x.to_dict(), arts))
-    df_atrs = pd.DataFrame(arts_dict)
+    df_arts = pd.DataFrame(arts_dict)
     return JSONResponse({"status": 200})
