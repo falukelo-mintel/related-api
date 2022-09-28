@@ -114,26 +114,23 @@ app.add_middleware(
 
 @app.get("/train_recommendation/")
 async def train_recommendation():
-    try:
-        db = firestore.Client()
-        doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
-        arts = list(doc_ref.stream())
-        arts_dict = list(map(lambda x: x.to_dict(), arts))
+    db = firestore.Client()
+    doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
+    arts = list(doc_ref.stream())
+    arts_dict = list(map(lambda x: x.to_dict(), arts))
 
-        #### Plean ####
-        df = pd.DataFrame(arts_dict)
-        train_recommendation(df, 'recommended')
+    #### Plean ####
+    df = pd.DataFrame(arts_dict)
+    train_recommendation(df, 'recommended')
 
-        #### The coach #### recommended_coach
-        df_coach = df.loc[df.link.str.contains('/krungsri-the-coach/')]
-        df_coach = df_coach.reset_index(drop = True)
-        train_recommendation(df_coach, 'recommended_coach')
-        
-        response = requests.get("https://recommend-api-0742218-vj5uu3gpya-as.a.run.app/update")
-        log.info(response)
-        return JSONResponse({'status': 200})
-    except:
-        return JSONResponse({'status': 400})
+    #### The coach #### recommended_coach
+    df_coach = df.loc[df.link.str.contains('/krungsri-the-coach/')]
+    df_coach = df_coach.reset_index(drop = True)
+    train_recommendation(df_coach, 'recommended_coach')
+
+    response = requests.get("https://recommend-api-0742218-vj5uu3gpya-as.a.run.app/update")
+    log.info(response)
+    return JSONResponse({'status': 200})
 
 @app.get("/")
 async def test():
