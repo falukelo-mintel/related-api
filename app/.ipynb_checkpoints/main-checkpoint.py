@@ -4,24 +4,22 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import pandas as pd
 import numpy as np
+import re
+from google.cloud import firestore
 import json
 import os
-from google.cloud import storage
-from google.cloud import logging
-import logging as log
-import subprocess
-import pythainlp
-import re
-from sklearn.feature_extraction.text import TfidfTransformer
-from utils import cosine_related_similarity, deepcut
+
+from utils import train_recommendation
+
 
 app = FastAPI()
-class Item_rel(BaseModel):
-    bucket_name: str
-
-class Item_rec(BaseModel):
-    input_file_gs: str
-    num_recommend: int
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/train_related/")
 async def train_related(item: Item_rel):
@@ -109,26 +107,25 @@ async def train_related(item: Item_rel):
     log.info('Success.')
     return 'success'
 
-@app.post("/train_recommendation/")
-async def train_recommendation(item: Item_rec):
-    df = pd.read_csv(item.input_file_gs)
-    df_text = df[['NodeName', 'DocumentUrlPath', 'NodeAliasPath', 'DocumentPageTitle','DocumentPageDescription']]
-    df_text = df_text.loc[(df_text['DocumentPageTitle'].notna() & df_text['DocumentPageDescription'].notna())]
-    df_text.reset_index(inplace = True,drop = True)
-    df_text['DocumentPageDescription'] = df_text['DocumentPageDescription'].apply(lambda x:re.sub('[^A-Za-z0-9ก-๙ ]+', '', x))
-    df_text['DocumentPageTitle'] = df_text['DocumentPageTitle'].apply(lambda x:re.sub('[^A-Za-z0-9ก-๙ ]+', '', x))
-    cVec = deepcut(df_text)
-    
-    tf_trans = TfidfTransformer()
-    tfIdf_matrix = tf_trans.fit_transform(cVec.values)
-    tfidf_df = pd.DataFrame(tfIdf_matrix.toarray(), columns = cVec.columns)
-    cosine_matrix = cosine_related_similarity(tfidf_df, item.num_recommend)
-    
-    df_text['recommend'] = cosine_matrix['TopThree']
-    df_text['DocumentUrlPath'] = df_text['DocumentUrlPath'].fillna(df_text['NodeAliasPath'])
+@app.get("/train_recommendation/")
+async def train_recommendation():
+    try:
+        db = firestore.Client()
+        doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
+        arts = list(doc_ref.stream())
+        arts_dict = list(map(lambda x: x.to_dict(), arts))
 
-    df_text.to_csv('data/recommended.csv', index=None)
-    return 'success'
+        #### Plean ####
+        df = pd.DataFrame(arts_dict)
+        train_recommendation(df, 'recommended')
+
+        #### The coach #### recommended_coach
+        df_coach = df.loc[df.link.str.contains('/krungsri-the-coach/')]
+        df_coach = df_coach.reset_index(drop = True)
+        train_recommendation(df_coach, 'recommended_coach')
+        return JSONResponse({'status': 200})
+    except:
+        return JSONResponse({'status': 400})
 
 @app.get("/")
 async def test():
