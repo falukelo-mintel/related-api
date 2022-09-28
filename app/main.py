@@ -76,6 +76,9 @@ async def create_item(url: str, cookie: str):
     if len(result['related_article']) < 3:
         while True:
             lim = 3 - len(result['related_article'])
+            query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).order_by(u'createdDate').limit(30).get()
+            history = [q.to_dict()['cx_web_url_fullpath'].split('?')[0] for q in query]
+            history = list(set(h for h in history if '/krungsri-the-coach/' in h or '/plearn-plearn/' in h))
             query = cont_ref.order_by(u'createdDate').limit(lim).get()
             for qry in query:
                 q = qry.to_dict()
