@@ -99,7 +99,7 @@ async def get_recommend(url: str, cookie: str):
     db = firestore.Client()
     doc_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/activities/data')
     
-    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).order_by(u'lastModified').limit(500).get()
+    query = doc_ref.where(u'cx_cookie', u'==', cx_cookie).order_by(u'lastModified', direction=firestore.Query.DESCENDING).limit(500).get()
     history = [q.to_dict()['cx_web_url_fullpath'].split('?')[0] for q in query]
     history = list(set(h for h in history if '/krungsri-the-coach/' in h or '/plearn-plearn/' in h))
     content_name = input_url.split('/')[-1]
