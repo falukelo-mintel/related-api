@@ -47,6 +47,7 @@ eng_char = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q",
 #     return cosine_matrix
 
 def text_tokenizer(text):
+    stop_words = [t for t in list(thai_stopwords())]
     terms = [k.strip() for k in word_tokenize(text, engine='nercut') if len(k.strip()) > 0 and k.strip() not in stop_words]
 
     return [t for t in terms if len(t) > 0 or t is not None]
