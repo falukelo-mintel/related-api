@@ -12,7 +12,7 @@ import ast
 from google.cloud import firestore
 from fastapi.middleware.cors import CORSMiddleware
 
-cossim_matrix = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/cossim_matrix.csv')
+# cossim_matrix = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/cossim_matrix.csv')
 recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
 
 # class Item(BaseModel):
@@ -41,7 +41,7 @@ async def create_item(url: str, cookie: str):
     
     content_name = input_url.split('/')[-1]
     description = recommended.loc[recommended["link"].str.contains(content_name, na=False)]
-    cosine_score = cossim_matrix.values.tolist()
+    # cosine_score = cossim_matrix.values.tolist()
     # print(type(cosine_score))
     
     result = {"related_article": []}
@@ -49,7 +49,7 @@ async def create_item(url: str, cookie: str):
     cont_ref = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
     urls = []
     for idx in list_recommend:
-        score = cosine_score[description.index[0]][int(idx)]
+        # score = cosine_score[description.index[0]][int(idx)]
         text = recommended.iloc[recommended.index == int(idx)]['link'].values[0]
         if '/krungsri-the-coach/' in input_url:
             if '/plearn-plearn/' in text:
@@ -74,16 +74,19 @@ async def create_item(url: str, cookie: str):
     except Exception as e:
         print(e)
     if len(result['related_article']) < 3:
-        lim = 3 - len(result['related_article'])
-        query = cont_ref.order_by(u'createdDate').limit(lim).get()
-        for qry in query:
-            q = qry.to_dict()
-            del q['textContent']
-            del q['createdBy']
-            del q['lastModified']
-            del q['createdDate']
-            del q['modifiedBy']
-            result['related_article'].append(q)
+        while True:
+            lim = 3 - len(result['related_article'])
+            query = cont_ref.order_by(u'createdDate').limit(lim).get()
+            for qry in query:
+                q = qry.to_dict()
+                del q['textContent']
+                del q['createdBy']
+                del q['lastModified']
+                del q['createdDate']
+                del q['modifiedBy']
+                text2 = quote(q['link'].split('/')[-1])
+                if all(text2 not in his for his in history):
+                    result['related_article'].append(q)
     
     return JSONResponse(content=result)
 
