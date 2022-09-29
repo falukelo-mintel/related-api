@@ -9,7 +9,7 @@ import ast
 from google.cloud import firestore
 from fastapi.middleware.cors import CORSMiddleware
 
-recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
+recommended_all = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
 recommended_coach = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended_coach.csv')
 
 db = firestore.Client()
@@ -105,10 +105,11 @@ async def get_recommend(url: str, cookie: str):
     content_name = input_url.split('/')[-1]
     
     if '/krungsri-the-coach/' in input_url:
-        recommended = recommended_coach
+        recommended = recommended_coach.copy()
         df_articles = df_arts.loc[df_arts.link.str.contains('/krungsri-the-coach/')]
     elif '/plearn-plearn/' in input_url:
-        df_articles = df_arts
+        recommended = recommended_all.copy()
+        df_articles = df_arts.copy()
         
     description = recommended.loc[recommended["link"].str.contains(content_name, na=False)]
     list_recommend = ast.literal_eval(description['recommend'].values[0])
@@ -149,11 +150,11 @@ async def test():
 
 @app.get("/update")
 async def update():
-    global recommended
+    global recommended_all
     global recommended_coach
     global df_arts
     global df_arts
-    recommended = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
+    recommended_all = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended.csv')
     recommended_coach = pd.read_csv('gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/model/recommended_coach.csv')
     db = firestore.Client()
     doc_arts = db.collection(u'Organizes/pJoo5lLhhAbbofIfYdLz/objects/articleContent/data')
