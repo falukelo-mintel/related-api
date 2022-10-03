@@ -120,6 +120,7 @@ async def train_recommendation():
 
     #### Plean ####
     df = pd.DataFrame(arts_dict)
+    df = df.loc[~df.category.str.contains('guru-financial')]
     train_rec(df, 'recommended')
 
     #### The coach #### recommended_coach
