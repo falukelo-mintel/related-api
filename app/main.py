@@ -109,7 +109,7 @@ async def get_recommend(url: str, cookie: str):
         df_articles = df_arts.loc[df_arts.link.str.contains('/krungsri-the-coach/')]
     elif '/plearn-plearn/' in input_url:
         recommended = recommended_all.copy()
-        df_articles = df_arts.loc[~df.category.str.contains('guru-financial')]
+        df_articles = df_arts.loc[~df_arts.category.str.contains('guru-financial')]
         
     df_articles = df_articles.reset_index(drop=True)    
     description = recommended.loc[recommended["link"].str.contains(content_name, na=False)]
