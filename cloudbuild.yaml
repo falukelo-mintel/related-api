@@ -15,7 +15,7 @@ steps:
   # [START cloudbuild_python_deploy_yaml]
   # Deploy to Cloud Run
   - name: google/cloud-sdk
-    args: ['gcloud', 'run', 'deploy', 'training_segmentation_ai', 
+    args: ['gcloud', 'run', 'deploy', 'training-segmentation-ai', 
            '--image=gcr.io/${PROJECT_ID}/training_segmentation_ai:${SHORT_SHA}', 
            '--region', 'asia-southeast1', '--platform', 'managed', 
            '--allow-unauthenticated', '--memory', '16Gi', '--cpu', '4',
