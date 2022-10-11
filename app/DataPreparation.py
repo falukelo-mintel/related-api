@@ -95,19 +95,18 @@ def CleanUserData():
         df['unknownContact.label'] = df.apply(lambda x: checkUnknown(x['fingerprint + cookie'],x['unknownContact.label'],df['unknownContact.label'].to_numpy()), axis=1).values
 
         li.append(df)
-        del df
         
     frame = pd.concat(li, axis=0, ignore_index=True)
-    
-    del li
     
     Fulldf = frame[frame['cx_web_url_fullpath'].notna()]
     Fulldf['cx_web_url_fullpath'] = list(map(reconstructLink, frame['cx_web_url_fullpath'].to_list()))
     
     all_prods = pd.read_csv("gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/state/product_segments.csv")
     corresp2 = dict()
+    
     for key, val in zip(all_prods.cx_link, clusters_prod):
         corresp2[key] = val 
+    
     
     Fulldf['cat_product'] = Fulldf.loc[:,'cx_web_url_fullpath'].map(corresp2)
     df_temp = Fulldf[Fulldf.cat_product.isnull() == False]
@@ -115,6 +114,9 @@ def CleanUserData():
     df_cleaned = df_temp[['fingerprint + cookie','unknownContact.label','unknownContact.value','cx_web_url_fullpath','cat_product']]
     df_cleaned.to_csv("gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/state/mappedUsers.csv", index= False)
     
+    del df
+    del li
+    del Fulldf
     #-----------------------------------------------------------------------------------------------------------------------
 
 
