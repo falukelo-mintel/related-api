@@ -18,3 +18,4 @@ hdbscan==0.8.29
 umap-learn==0.5.3
 tqdm==4.64.1
 google-cloud-bigquery==3.4.1
+pyproject-toml==0.0.10
