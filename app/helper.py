@@ -26,8 +26,6 @@ import string
 
 import pandas as pd
 import numpy as np
-import deepcut
-from deepcut import DeepcutTokenizer
 
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.multiclass import OneVsRestClassifier
