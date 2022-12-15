@@ -1,8 +1,9 @@
 import pandas as pd
 from datetime import date
 from nanoid import generate
-import firebase_admin
-from firebase_admin import credentials, firestore
+from google.cloud import firestore
+# import firebase_admin
+# from firebase_admin import credentials, firestore
 
 tag_name = {
     0:'All about Krungsri',
