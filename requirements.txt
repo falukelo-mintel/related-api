@@ -21,3 +21,4 @@ google-cloud-bigquery==3.4.1
 pyproject-toml==0.0.10
 matplotlib==2.2.2
 nanoid==2.0.0
+db-dtypes==1.0.5
