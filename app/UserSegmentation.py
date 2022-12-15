@@ -72,7 +72,7 @@ def read_from_blob(bucket_name,file_name):
 
 def MapToUser():
     #Logging into client Bucket
-    credentials = "/home/jupyter/krungsri/connect-x-production-firebase-adminsdk-gg382-b1563f2b74.json"
+    # credentials = "/home/jupyter/krungsri/connect-x-production-firebase-adminsdk-gg382-b1563f2b74.json"
     
     # TODO Uncomment for production
     client = storage.Client()

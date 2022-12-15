@@ -62,9 +62,9 @@ def CleanUserData():
     #Fulldf = pd.read_csv('gs://connectx-ai-backupdata-rd/krungsri/data/data_2505_2511.csv',parse_dates=dateCol) #Change this
     
     queryDate = read_from_blob(BUCKET_NAME,last_date)
-    credentials = google.oauth2.service_account.Credentials.from_service_account_file(
-                    '/home/jupyter/krungsri/connect-x-production-1a148ceb71e0.json',
-                    scopes=['https://www.googleapis.com/auth/cloud-platform'])
+    # credentials = google.oauth2.service_account.Credentials.from_service_account_file(
+    #                 '/home/jupyter/krungsri/connect-x-production-1a148ceb71e0.json',
+    #                 scopes=['https://www.googleapis.com/auth/cloud-platform'])
     
     #TODO Uncomment credentials for production
     bqclient = bigquery.Client()
@@ -88,7 +88,7 @@ def CleanUserData():
     Fulldf = Fulldf[list(map(removeJP,tqdm(Fulldf.cx_link.to_list())))]
     Fulldf = Fulldf[list(map(removeBusiness,tqdm(Fulldf.cx_link.to_list())))]
     print("Getting Scraped Data")
-    credentials = "/home/jupyter/krungsri/connect-x-production-firebase-adminsdk-gg382-b1563f2b74.json"
+    # credentials = "/home/jupyter/krungsri/connect-x-production-firebase-adminsdk-gg382-b1563f2b74.json"
     
     #COMMENT OUT storage options when in production TODO
     # df_scraped_all = pd.read_csv("gs://connect-x-production.appspot.com/Organizes/pJoo5lLhhAbbofIfYdLz/AI/ScrapedData/25_11_2022Full.csv",
