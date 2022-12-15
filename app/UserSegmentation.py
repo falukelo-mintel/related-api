@@ -141,7 +141,7 @@ def MapToUser():
     #COMMENT OUT storage options when in production TODO
     # df_users_cleaned = pd.read_csv(li_reLinks[0], index_col='createdDate',
     #                               storage_options={"token": credentials})
-    df_users_cleaned = pd.read_csv(li_reLinks[[0], index_col='createdDate')
+    df_users_cleaned = pd.read_csv(li_reLinks[0], index_col='createdDate')
 
     #Mapping Topics to Users
     print("Mapping Topics to Users")
