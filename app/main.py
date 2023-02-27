@@ -9,6 +9,7 @@ from google.cloud import firestore
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import quote, unquote
 
+
 from utils import related_similarity_content_tfidf
 # import numpy as np
 # from tqdm.auto import tqdm
